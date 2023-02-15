@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "Insert text from GPT",
+  "description": "This extension lets you insert text from GPT into any webpage.",
+  "version": "1.0",
+  "icons": {
+    "16": "icons/blockquote-right-16.png",
+    "32": "icons/blockquote-right-32.png",
+    "48": "icons/blockquote-right-48.png",
+    "128": "icons/blockquote-right-128.png"
+  },
+  "action": {
+    "default_title": "Go to extension's option to configure your GPT prompts"
+  },
+  "permissions": [
+    "contextMenus",
+    "clipboardWrite",
+    "storage"
+  ],
+  "options_page": "options/index.html",
+  "background": {
+    "service_worker": "background/background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content/content.js"
+      ]
+    }
+  ]
+}
