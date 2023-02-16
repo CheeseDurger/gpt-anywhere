@@ -4,7 +4,7 @@ import { Selector } from "./app/Selector";
 import { Spinner } from "./app/Spinner";
 
 /**
- * @description on connection : print completion from OpenAI to the active DOM element
+ * @description on connection: print completion from OpenAI to the active DOM element
  */
 chrome.runtime.onConnect.addListener((port: chrome.runtime.Port) => {
   // Guard clause

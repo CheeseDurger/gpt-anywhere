@@ -1,7 +1,7 @@
 # Overview
 TextBot is a browser extension (Chrome for now), that allows the user to input GPT completions anywhere on a website.
 
-Typical use cases are :
+Typical use cases are:
 - Social media
 - Email
 - User support
@@ -16,7 +16,12 @@ Typical use cases are :
 ├── 04-content                   # Content script
 └── ...
 ```
-For reference on what is `options`, `background` and `content`, see [Chrome Extension](https://developer.chrome.com/docs/extensions/) documentation.
+For reference on `options`, `background` and `content`, see [Chrome Extension](https://developer.chrome.com/docs/extensions/) documentation.
 
-## License
+# Build
+To build the Chrome extension:
+1. Run `npm run build`
+2. Load the extension from `./dist` folder
+
+# License
 [Unlicense](LICENSE)

@@ -1,5 +1,7 @@
 import { PromptDTO } from "../../01-shared/types";
 
+import { config } from "../../01-shared/config";
+
 export class Fetcher {
 
   private readonly apiKey: string;
@@ -20,7 +22,7 @@ export class Fetcher {
   public async getCompletion(prompt: PromptDTO): Promise<ReadableStreamDefaultReader<string>> {
 
     const response = await fetch(this.endpoint, {
-      method: 'POST', // *GET, POST, PUT, DELETE, etc.
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: "Bearer " + this.apiKey,
@@ -32,10 +34,9 @@ export class Fetcher {
         stop: "\n\nµµµ",
         stream: true,
       }),
-    },
-    );
+    });
 
-    if (response.body === null) throw new Error("Fetch body is null");
+    if (response.body === null) return new ReadableStreamDefaultReader(this.getErrorStream());
     
     const reader: ReadableStreamDefaultReader<string> = response.body
       .pipeThrough(new TextDecoderStream())
@@ -43,7 +44,7 @@ export class Fetcher {
       .pipeThrough(this.openAiText())
       .getReader();
 
-      return reader;
+    return reader;
 
   };
 
@@ -63,16 +64,16 @@ export class Fetcher {
           .split("\n\n");             // Split every 2 newlines (each message is separated by 2 newlines)
 
         for (const message of messages) {
-          // Guard clause : close stream if last stream message
+          // Guard clause: close stream if last stream message
           if (message === "data: [DONE]") {
             controller.terminate();
             break;
           }
 
-          // Guard clause : don't process SSE comments
+          // Guard clause: don't process SSE comments
           if (message.charAt(0) === ":") continue;
           
-          // Guard clause : don't process empty stream message
+          // Guard clause: don't process empty stream message
           if (message === "data: ") continue;
           
           // Remove start of message
@@ -97,20 +98,36 @@ export class Fetcher {
     return new TransformStream({
       transform(chunkJSON, controller) {
 
-        // Guard clause : return "Error" if error from OpenAI
+        // Guard clause: return "Error" if error from OpenAI
         if(chunkJSON.error !== undefined) {
-          controller.enqueue("Error : server error from OpenAI");
+          controller.enqueue(config.error.messages.default);
+          console.error("ERROR: OpenAI returned a JSON with an `error` property\n", chunkJSON);
           controller.terminate();
         }
 
-        // Guard clause : return "Error" if malformed JSON
+        // Guard clause: return "Error" if malformed JSON
         let text: any = chunkJSON?.choices?.[0]?.text;
         if (typeof text !== "string") {
-          controller.enqueue("Error : malformed JSON received from OpenAI");
+          controller.enqueue(config.error.messages.default);
+          console.error("ERROR: OpenAI returned a JSON where `.choices.[0].text` is not a `string`\n", chunkJSON);
           controller.terminate();
         }
         else controller.enqueue(text);
 
+      },
+    });
+  };
+
+  /**
+   * Get a stream that sends only 1 string message stating an error
+   * @returns stream
+   */
+  private getErrorStream(): ReadableStream<string> {
+    return new ReadableStream({
+      start(controller: ReadableStreamDefaultController<string>) {
+        controller.enqueue(config.error.messages.default);
+        console.error("ERROR: fetch response.body is null\n");
+        controller.close();
       },
     });
   };

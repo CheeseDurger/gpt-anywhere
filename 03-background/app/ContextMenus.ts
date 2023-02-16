@@ -12,7 +12,7 @@ export class ContextMenus {
     prompts.forEach((prompt: PromptDTO, index: number) => {
       chrome.contextMenus.create({
         id: index.toString(),
-        title: "Generate : " + prompt.name,
+        title: "Generate: " + prompt.name,
         type: 'normal',
         contexts: ['editable'],
       });

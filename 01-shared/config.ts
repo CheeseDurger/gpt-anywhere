@@ -13,4 +13,9 @@ export const config = {
       secondary: "lightsalmon",
     },
   },
+  error: {
+    messages: {
+      default: "\nERROR: error from OpenAI servers",
+    },
+  },
 };

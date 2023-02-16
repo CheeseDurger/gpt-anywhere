@@ -9,11 +9,11 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (event: 'savePrompt', prompt: PromptDTO, index: number, tooltip: Tooltip): void;
+  (event: 'savePrompt', prompt: PromptDTO, index: number): void;
   (event: 'deletePrompt', index: number): void;
 }>();
 
-const title: string = props.last ? 'New prompt' : 'Prompt ' + (props.index + 1).toString();
+const title: string = props.last ? 'Add new prompt' : 'Prompt ' + (props.index + 1).toString();
 
 function save() {
   let input: HTMLInputElement = document.getElementById('prompt-name-' + props.index.toString()) as HTMLInputElement;
@@ -23,34 +23,57 @@ function save() {
     value: textArea.value,
   }
 
-  let button: HTMLButtonElement = document.getElementById('save-' + props.index.toString()) as HTMLButtonElement;
-  const tooltip = new Tooltip(button);
-  tooltip.show();
-
-  emit('savePrompt', newPrompt, props.index, tooltip);
+  if (!props.last) {
+    let button: HTMLButtonElement = document.getElementById('save-' + props.index.toString()) as HTMLButtonElement;
+    const tooltip = new Tooltip(button);
+    tooltip.show();
+    setTimeout(() => tooltip.hide(), 1000);
+  }
+  
+  emit('savePrompt', newPrompt, props.index);
 };
 
 </script>
 
 <template>
-  <hr />
-  <div class="my-4 g-4">
-    <h2 class="h4">{{ title }}</h2>
-    <fieldset name="prompt">
-      <div class="my-2">
-        <label class="form-label" :for="'prompt-name-' + index.toString()">Your prompt name:</label>
-        <input class="form-control" :id="'prompt-name-' + index.toString()" type="text" :value="prompt.name">
+  
+  <div class="my-4">
+
+    <h3 class="h5">{{ title }}</h3>
+
+    <div class="row my-2">
+      <label class="col-2 col-form-label" :for="'prompt-name-' + index.toString()">Prompt name:</label>
+      <div class="col-10">
+        <input class="form-control" :id="'prompt-name-' + index.toString()" type="text" :value="prompt.name" :aria-describedby="'prompt-name-help-' + index.toString()">
+        <div class="form-text small" :id="'prompt-name-help-' + index.toString()">
+          A recognizable name for the prompt (eg. "Twitter")
+        </div>
       </div>
-      <div class="my-2">
-        <label class="form-label" :for="'prompt-value-' + index.toString()">Your prompt text:</label>
-        <textarea class="form-control" :id="'prompt-value-' + index.toString()" :value="prompt.value"></textarea>
+    </div>
+
+    <div class="row my-2">
+      <label class="col-2 col-form-label" :for="'prompt-value-' + index.toString()">Prompt text:</label>
+      <div class="col-10">
+        <textarea class="form-control" :id="'prompt-value-' + index.toString()" :value="prompt.value" :aria-describedby="'prompt-value-help-' + index.toString()"></textarea>
+        <div class="form-text" :id="'prompt-value-help-' + index.toString()">
+          The prompt sent to GPT (eg. "Write a viral tweet about...")
+        </div>
       </div>
-      <button class="btn btn-secondary me-2" :id="'save-' + index.toString()" type="button"
-      data-bs-toggle="tooltip" data-bs-placement="top" data-bs-trigger="manual" data-bs-title="Saved!"
-      @click="save()">
-        {{last ? 'Add' : 'Save'}}
-      </button>
-      <button class="btn btn-secondary" :class="last ? 'd-none' : ''" :id="'delete-' + index.toString()" type="button" @click="$emit('deletePrompt', index)">Delete</button>
-    </fieldset>
+    </div>
+
+    <button v-if="!last" class="btn btn-success me-2" :id="'save-' + index.toString()" type="button"
+    data-bs-toggle="tooltip" data-bs-placement="top" data-bs-trigger="manual" data-bs-title="Saved!"
+    @click="save()">
+      {{last ? 'Add prompt' : 'Save prompt ' + (index + 1).toString()}}
+    </button>
+    <button v-if="!last" class="btn btn-secondary" :id="'delete-' + index.toString()" type="button" @click="$emit('deletePrompt', index)">{{"Delete prompt " + (index + 1).toString()}}</button>
+    <button v-if="last" class="btn btn-success" :id="'save-' + index.toString()" type="button"
+    @click="save()">
+      Add prompt
+    </button>
+
   </div>
+
+  <hr v-if="!last" />
+
 </template>

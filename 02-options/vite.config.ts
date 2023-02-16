@@ -13,7 +13,6 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
-      // '@': fileURLToPath(new URL('./src', import.meta.url))
       '@': fileURLToPath(new URL('../01-shared', import.meta.url))
     }
   }

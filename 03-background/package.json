@@ -1,20 +1,13 @@
 {
-  "name": "textbot",
-  "version": "1.0.0",
-  "description": "",
-  "main": "content.js",
+  "name": "background",
+  "private": true,
   "scripts": {
-    "build": "esbuild background.ts --bundle --target=chrome58,firefox57,safari11,edge16 --outfile=../dist/background/background.js",
-    "debug": "nodemon -e js,ts,html,css --exec \"npm run build\""
+    "build": "esbuild background.ts --bundle --target=chrome58,firefox57,safari11,edge16 --outfile=../dist/background/background.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
     "@types/node": "^18.13.0",
     "chrome-types": "^0.1.171",
     "esbuild": "^0.17.7",
-    "nodemon": "^2.0.20",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.5"
   }

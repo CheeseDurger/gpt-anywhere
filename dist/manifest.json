@@ -1,20 +1,19 @@
 {
   "manifest_version": 3,
-  "name": "Insert text from GPT",
-  "description": "This extension lets you insert text from GPT into any webpage.",
+  "name": "TextBot",
+  "description": "This extension lets you insert text from GPT in any text box on any webpage.",
   "version": "1.0",
   "icons": {
-    "16": "icons/blockquote-right-16.png",
-    "32": "icons/blockquote-right-32.png",
-    "48": "icons/blockquote-right-48.png",
-    "128": "icons/blockquote-right-128.png"
+    "16": "icons/icon-16px.png",
+    "32": "icons/icon-32px.png",
+    "48": "icons/icon-48px.png",
+    "128": "icons/icon-128px.png"
   },
   "action": {
-    "default_title": "Go to extension's option to configure your GPT prompts"
+    "default_title": "Go to this extension's Options to configure your GPT prompts"
   },
   "permissions": [
     "contextMenus",
-    "clipboardWrite",
     "storage"
   ],
   "options_page": "options/index.html",

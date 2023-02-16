@@ -5,7 +5,6 @@ import { ref, type Ref } from 'vue';
 
 const key: string = "apiKey";
 const apiKey: Ref<string> = ref("");
-
 chrome.storage.sync.get(key).then(object => {
   if (key in object) apiKey.value = object[key];
 });
@@ -30,22 +29,25 @@ function toggleApiKey(): void {
 </script>
 
 <template>
-  <div class="my-4">
-    <h2 class="h4">Your API key</h2>
-    <fieldset class="g-2" name="apiKey">
-      <div class="my-2">
-        <label class="form-label" for="apiKey">Your <a href="https://openai.com/" target="_blank">OpenAI</a> API key:</label>
+  <div class="my-5">
+    <h2 class="h4">API key</h2>
+    <div class="row my-2">
+      <label class="col-2 col-form-label" for="apiKey">OpenAI API key:</label>
+      <div class="col-10">
         <input class="form-control" id="apiKey" type="password" :value="apiKey">
-        <input class="form-check-input" id="apiKey-label" type="checkbox" @click="toggleApiKey">
-        <label class="form-check-label" for="apiKey-label">
-          Show API key
-        </label>
+        <div class="form-check form-switch">
+          <input class="form-check-input" id="apiKey-label" type="checkbox" role="switch" @click="toggleApiKey">
+          <label class="form-check-label" for="apiKey-label">
+            Show API key
+          </label>
+        </div>
       </div>
-    </fieldset>
-    <button type="button" class="btn btn-secondary" id="save-apiKey"
+    </div>
+    <button type="button" class="btn btn-success" id="save-apiKey"
     data-bs-toggle="tooltip" data-bs-placement="top" data-bs-trigger="manual" data-bs-title="Saved!"
     @click="saveApiKey">
-      Save
+      Save API key
     </button>
   </div>
+  <hr>
 </template>
