@@ -1,19 +1,22 @@
 {
-  "name": "textbot",
+  "name": "gpt-anywhere",
   "version": "1.0.0",
-  "description": "TextBot is a browser extension (Chrome for now), that allows the user to ask GPT on any website.",
+  "description": "GPT Anywhere is a Chrome extension that allows the user to use GPT on any website.",
   "scripts": {
-    "build:options": "cd ./02-options && npm run build",
-    "build:background": "cd ./03-background && npm run build",
-    "build:content": "cd ./04-content && npm run build",
+    "build:global": "cd ./02-global && npm run build",
+    "build:options": "cd ./03-options && npm run build",
+    "build:background": "cd ./04-background && npm run build",
+    "build:content": "cd ./05-content && npm run build",
     "build": "run-p build:*",
     "dev": "nodemon -e js,ts,html,css,json,vue,ico,png --exec \"npm run build\""
   },
   "nodemonConfig": {
-    "ignore": ["dist/options/", "dist/background/", "dist/content/"]
+    "ignore": [
+      "dist/"
+    ]
   },
   "license": "unlicense",
-  "dependencies": {
+  "devDependencies": {
     "nodemon": "^2.0.20",
     "npm-run-all": "^4.1.5"
   }

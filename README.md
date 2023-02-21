@@ -1,5 +1,5 @@
 # Overview
-TextBot is a browser extension (Chrome for now), that allows the user to input GPT completions anywhere on a website.
+GPT Anywhere is a browser extension (Chrome for now), that allows the user to input GPT completions anywhere on a website.
 
 Typical use cases are:
 - Social media

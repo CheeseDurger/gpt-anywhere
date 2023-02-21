@@ -1,11 +1,11 @@
 <template>
 
-  <h1>TextBot</h1>
+  <h1>GPT Anywhere</h1>
 
   <div class="alert alert-danger my-5" role="alert">
     <h2 class="h4">Read this first!!!</h2>
     <p>
-      TextBot is an extension that allows to easily use GPT on any webpage.
+      GPT Anywhere is an extension that allows to easily use GPT on any webpage.
     </p>
     <p>
       This page is the extension's Options page. You must configure the extension here before using it :

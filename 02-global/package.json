@@ -1,0 +1,11 @@
+{
+  "name": "global",
+  "private": true,
+  "scripts": {
+    "prebuild": "shx mkdir -p ../dist",
+    "build": "shx cp -r manifest.json icons/ ../dist/"
+  },
+  "devDependencies": {
+    "shx": "^0.3.4"
+  }
+}

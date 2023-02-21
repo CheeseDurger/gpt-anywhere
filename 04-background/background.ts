@@ -37,7 +37,7 @@ chrome.contextMenus.onClicked.addListener(async (item, tab) => {
   
   // Setup text upon extension's icon
   chrome.action.setBadgeBackgroundColor({color: config.ui.color.primary, tabId: tab.id});
-  chrome.action.setBadgeText({text: 'GPT', tabId: tab.id});
+  chrome.action.setBadgeText({text: 'WIP', tabId: tab.id});
 
   try {
     const data: Data = await getData();

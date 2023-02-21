@@ -3,16 +3,16 @@
 
 <svg
    id="svg1"
-   sodipodi:docname="fttext.svg"
+   sodipodi:docname="icon.svg"
    viewBox="0 0 60 60"
    sodipodi:version="0.32"
    version="1.0"
    y="0"
    x="0"
    inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
-   inkscape:export-filename="icon-260px.png"
-   inkscape:export-xdpi="416"
-   inkscape:export-ydpi="416"
+   inkscape:export-filename="icon-16px.png"
+   inkscape:export-xdpi="25.6"
+   inkscape:export-ydpi="25.6"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -32,8 +32,8 @@
      inkscape:zoom="4.9119411"
      inkscape:window-x="-6"
      borderopacity="1.0"
-     inkscape:cx="27.38225"
-     inkscape:cy="21.885442"
+     inkscape:cx="10.688239"
+     inkscape:cy="22.089027"
      inkscape:window-y="-6"
      inkscape:window-height="860"
      inkscape:pageopacity="0.0"
@@ -97,13 +97,13 @@
   </metadata>
   <text
      xml:space="preserve"
-     style="font-size:43.1612px;fill:#333333;fill-opacity:1;stroke-width:1.34876"
-     x="9.3888407"
-     y="45.447834"
+     style="font-size:31.8111px;fill:#333333;fill-opacity:1;stroke-width:1.14926"
+     x="3.757396"
+     y="37.968307"
      id="text2621"><tspan
        sodipodi:role="line"
        id="tspan2619"
-       x="9.3888407"
-       y="45.447834"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:43.1612px;font-family:'Arial Rounded MT Bold';-inkscape-font-specification:'Arial Rounded MT Bold, ';stroke-width:1.34876">tb</tspan></text>
+       x="3.757396"
+       y="37.968307"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:31.8111px;font-family:'Arial Rounded MT Bold';-inkscape-font-specification:'Arial Rounded MT Bold, ';stroke-width:1.14926">gpt</tspan></text>
 </svg>

@@ -16,8 +16,8 @@ chrome.runtime.onConnect.addListener((port: chrome.runtime.Port) => {
 
   // Create a html string for loading spinner
   const id: string = Math.floor(Math.random() * 100000000).toString();
-  const spinnerId: string = "spinner-textbot-" + id;
-  const styleId: string = "style-textbot-" + id;
+  const spinnerId: string = "spinner-gpt-anywhere-" + id;
+  const styleId: string = "style-gpt-anywhere-" + id;
   const spinnerString: string = new Spinner().htmlString(spinnerId, styleId);
 
   // Insert loading spinner

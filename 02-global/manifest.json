@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "TextBot",
+  "name": "GPT Anywhere",
   "description": "This extension lets you insert text from GPT in any text box on any webpage.",
-  "version": "1.0",
+  "version": "1.0.1",
   "icons": {
     "16": "icons/icon-16px.png",
     "32": "icons/icon-32px.png",
