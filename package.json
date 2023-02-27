@@ -8,7 +8,11 @@
     "build:background": "cd ./04-background && npm run build",
     "build:content": "cd ./05-content && npm run build",
     "build": "run-p build:*",
-    "dev": "nodemon -e js,ts,html,css,json,vue,ico,png --exec \"npm run build\""
+    "dev:global": "cd ./02-global && npm run dev",
+    "dev:options": "cd ./03-options && npm run dev",
+    "dev:background": "cd ./04-background && npm run dev",
+    "dev:content": "cd ./05-content && npm run dev",
+    "dev": "run-p dev:*"
   },
   "nodemonConfig": {
     "ignore": [
@@ -17,7 +21,6 @@
   },
   "license": "unlicense",
   "devDependencies": {
-    "nodemon": "^2.0.20",
     "npm-run-all": "^4.1.5"
   }
 }

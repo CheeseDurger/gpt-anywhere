@@ -1,4 +1,4 @@
-import { PromptDTO } from "../../01-shared/types";
+import { PromptDTO, Context } from "../../01-shared/types";
 
 import { config } from "../../01-shared/config";
 
@@ -19,8 +19,10 @@ export class Fetcher {
    * @param prompt 
    * @returns reader for GPT completion stream
    */
-  public async getCompletion(prompt: PromptDTO): Promise<ReadableStreamDefaultReader<string>> {
+  public async getCompletion(prompt: PromptDTO, context: Context): Promise<ReadableStreamDefaultReader<string>> {
 
+    let promptText = this.substitute(prompt.value, context.substitution);
+    console.log("Prompt sent to OpenAI :", promptText);
     const response = await fetch(this.endpoint, {
       method: 'POST',
       headers: {
@@ -29,8 +31,8 @@ export class Fetcher {
       },
       body: JSON.stringify({
         model: this.model,
-        prompt: prompt.value,
-        max_tokens: 4000,
+        prompt: promptText,
+        max_tokens: 2000,
         stop: "\n\nµµµ",
         stream: true,
       }),
@@ -130,6 +132,11 @@ export class Fetcher {
         controller.close();
       },
     });
+  };
+
+  private substitute(promptText: string, substitution: string): string {
+    // @ts-ignore: string.matchAll() requires adding a specific lib for Typescript
+    return promptText.replaceAll(config.prompt.susbstitutionPlaceholder, substitution);
   };
 
 }

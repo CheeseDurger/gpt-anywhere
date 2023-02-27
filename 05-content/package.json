@@ -1,14 +1,31 @@
 {
   "name": "content",
   "private": true,
+  "browserslist": "> 0.5%, last 2 versions, not dead",
+  "source": "content.ts",
   "scripts": {
-    "build": "esbuild content.ts --bundle --target=chrome58,firefox57,safari11,edge16 --outfile=../dist/content/content.js"
+    "debug": "parcel serve tests/index.html --public-url / --dist-dir dist",
+    "build": "parcel build --no-optimize --no-source-maps --no-scope-hoist --dist-dir ../dist/content",
+    "dev": "nodemon -e js,ts,html,css,json,vue,ico,png --exec \"npm run build\"",
+    "vite": "vite build"
   },
   "devDependencies": {
-    "@types/node": "^18.13.0",
+    "@parcel/transformer-inline-string": "^2.8.3",
+    "@parcel/transformer-sass": "^2.8.3",
+    "@types/bootstrap": "^5.2.6",
+    "@types/node": "^18.14.2",
     "chrome-types": "^0.1.171",
     "esbuild": "^0.17.7",
+    "nodemon": "^2.0.20",
+    "parcel": "^2.8.3",
+    "sass": "^1.58.3",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.5"
+  },
+  "dependencies": {
+    "@popperjs/core": "^2.11.6",
+    "bootstrap": "^5.2.3",
+    "rollup": "^3.17.2",
+    "vite": "^4.1.4"
   }
 }

@@ -14,7 +14,7 @@
           OpenAI account with free credits and generate a new API key)</li>
         <li><strong>Save your API key</strong> below</li>
         <li><strong>Craft your prompts and save them</strong> below</li>
-        <li><strong>Right-click in any text box on any webpage</strong> to get GPT completions from your prompts</li>
+        <li><strong>Right-click on any webpage</strong> to get GPT completions from your prompts</li>
       </ol>
       Note:
       <ul>

@@ -6,8 +6,7 @@ import { Publisher } from "./app/Publisher";
 import { Fetcher } from "./app/Fetcher";
 import { Data, getData } from "./app/Storage";
 import { ContextMenus } from "./app/ContextMenus";
-
-// import "./hot-reload";
+import { Context } from "../01-shared/types";
 
 /**
  * @description add context menu entries on right click
@@ -25,7 +24,7 @@ chrome.storage.sync.onChanged.addListener(async () => {
 /**
  * @description add actions on context menu entries
  */
-chrome.contextMenus.onClicked.addListener(async (item, tab) => {
+chrome.contextMenus.onClicked.addListener(async (info: chrome.contextMenus.OnClickData, tab: chrome.tabs.Tab | undefined) => {
   // Guard clause:
   // - Tabs might be undefined (eg. click outside a tab)
   // - Tabs might not have ids (eg. tabs without ids)
@@ -33,7 +32,7 @@ chrome.contextMenus.onClicked.addListener(async (item, tab) => {
 
   const port: chrome.runtime.Port = chrome.tabs.connect(tab.id, { name: "generate" });
 
-  let id: number = (typeof item.menuItemId === "number") ? item.menuItemId: parseInt(item.menuItemId);
+  let id: number = (typeof info.menuItemId === "number") ? info.menuItemId: parseInt(info.menuItemId);
   
   // Setup text upon extension's icon
   chrome.action.setBadgeBackgroundColor({color: config.ui.color.primary, tabId: tab.id});
@@ -42,7 +41,8 @@ chrome.contextMenus.onClicked.addListener(async (item, tab) => {
   try {
     const data: Data = await getData();
     const fetcher: Fetcher = new Fetcher(data.apiKey, config.openai.endpoint, config.openai.model);
-    const reader: ReadableStreamDefaultReader<string> = await fetcher.getCompletion(data.prompts[id]);
+    const context: Context = { substitution: info.selectionText ?? "" };
+    const reader: ReadableStreamDefaultReader<string> = await fetcher.getCompletion(data.prompts[id], context);
     const publisher: Publisher = new Publisher();
     await publisher.publish(reader, port);
   } catch (error) {

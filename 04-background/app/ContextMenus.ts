@@ -14,7 +14,7 @@ export class ContextMenus {
         id: index.toString(),
         title: "Generate: " + prompt.name,
         type: 'normal',
-        contexts: ['editable'],
+        contexts: ['all'],
       });
     });
 

@@ -2,10 +2,12 @@
   "name": "global",
   "private": true,
   "scripts": {
-    "prebuild": "shx mkdir -p ../dist",
-    "build": "shx cp -r manifest.json icons/ ../dist/"
+    "init": "shx mkdir -p ../dist",
+    "build": "npm run init && shx cp -r manifest.json icons/ ../dist/",
+    "dev": "nodemon -e js,ts,html,css,json,vue,ico,png --exec \"npm run build\""
   },
   "devDependencies": {
+    "nodemon": "^2.0.20",
     "shx": "^0.3.4"
   }
 }

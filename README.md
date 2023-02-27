@@ -11,9 +11,10 @@ Typical use cases are:
 ```
 .
 ├── 01-shared                    # Shared types and config files
-├── 02-options                   # Options script
-├── 03-background                # Background script
-├── 04-content                   # Content script
+├── 02-options                   # Chrome extension's global files (manifest.json, icons, etc.)
+├── 03-options                   # Options script
+├── 04-background                # Background script
+├── 05-content                   # Content script
 └── ...
 ```
 For reference on `options`, `background` and `content`, see [Chrome Extension](https://developer.chrome.com/docs/extensions/) documentation.

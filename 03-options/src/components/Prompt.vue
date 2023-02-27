@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Tooltip } from "bootstrap";
 import type { PromptDTO } from "../../../01-shared/types";
+import { config } from "../../../01-shared/config";
 
 const props = defineProps<{
   last: boolean;
@@ -54,9 +55,14 @@ function save() {
     <div class="row my-2">
       <label class="col-2 col-form-label" :for="'prompt-value-' + index.toString()">Prompt text:</label>
       <div class="col-10">
-        <textarea class="form-control" :id="'prompt-value-' + index.toString()" :value="prompt.value" :aria-describedby="'prompt-value-help-' + index.toString()"></textarea>
+        <textarea class="form-control" rows="6" :id="'prompt-value-' + index.toString()" :value="prompt.value" :aria-describedby="'prompt-value-help-' + index.toString()"></textarea>
         <div class="form-text" :id="'prompt-value-help-' + index.toString()">
-          The prompt sent to GPT (eg. "Write a viral tweet about...")
+          The prompt sent to GPT (eg. "Write a viral tweet about...").<br>
+          You may use <code>{{ config.prompt.susbstitutionPlaceholder }}</code>'s placeholder
+          anywhere in your prompt. Then on a webpage when you Select text > Right click >
+          Choose this prompt in the context menu, the extension will send your prompt to 
+          OpenAI with <code>{{ config.prompt.susbstitutionPlaceholder }}</code> replaced 
+          with he selected text on the webpage.
         </div>
       </div>
     </div>

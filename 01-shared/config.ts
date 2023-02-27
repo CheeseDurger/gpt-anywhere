@@ -3,6 +3,9 @@ export const config = {
     endpoint: "https://api.openai.com/v1/completions",
     model: "text-davinci-003",
   },
+  prompt: {
+    susbstitutionPlaceholder: "%SUBSTITUTION%",
+  },
   storage: {
     apiKeyKey: "apiKey",
     promptsKey: "prompts",
@@ -11,6 +14,9 @@ export const config = {
     color: {
       primary: "crimson",
       secondary: "lightsalmon",
+    },
+    id: {
+      shadowRoot: "gpt-anywhere-shadow-root",
     },
   },
   error: {
