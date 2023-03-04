@@ -1,7 +1,12 @@
+import type { Model } from "./types";
+
 export const config = {
   openai: {
     endpoint: "https://api.openai.com/v1/completions",
-    model: "text-davinci-003",
+    model: {
+      name: "text-davinci-003",
+      maxTokens: 4097,
+    } as Model,
   },
   prompt: {
     susbstitutionPlaceholder: "%SUBSTITUTION%",
@@ -14,14 +19,6 @@ export const config = {
     color: {
       primary: "crimson",
       secondary: "lightsalmon",
-    },
-    id: {
-      shadowRoot: "gpt-anywhere-shadow-root",
-    },
-  },
-  error: {
-    messages: {
-      default: "\nERROR: error from OpenAI servers",
     },
   },
 };

@@ -8,7 +8,7 @@ import Prompt from './Prompt.vue'
 const key: string = "prompts";
 
 let prompts: PromptDTO[] = reactive([]);
-let nextIndex: Ref<number> = ref(0);
+const nextIndex: Ref<number> = ref(0);
 chrome.storage.sync.get(key).then(object => {
   if (key in object) prompts = reactive(object[key]);
   nextIndex.value = prompts.length;

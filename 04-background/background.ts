@@ -11,14 +11,19 @@ import { Context } from "../01-shared/types";
 /**
  * @description add context menu entries on right click
  */
-chrome.runtime.onInstalled.addListener(async () => {
+chrome.runtime.onInstalled.addListener(async (details) => {
+  if (details.reason === "install" || details.reason === "update") chrome.runtime.openOptionsPage();
   const data: Data = await getData();
-  chrome.tabs.create({ url: chrome.runtime.getURL("/options/index.html") });
   await new ContextMenus().set(data.prompts);
 });
+
 chrome.storage.sync.onChanged.addListener(async () => {
   const data: Data = await getData();
   await new ContextMenus().set(data.prompts);
+});
+
+chrome.action.onClicked.addListener(() => {
+  chrome.runtime.openOptionsPage();
 });
 
 /**
@@ -28,16 +33,12 @@ chrome.contextMenus.onClicked.addListener(async (info: chrome.contextMenus.OnCli
   // Guard clause:
   // - Tabs might be undefined (eg. click outside a tab)
   // - Tabs might not have ids (eg. tabs without ids)
-  if (tab === undefined || tab.id === undefined) return;
+  if (tab?.id === undefined) return;
 
   const port: chrome.runtime.Port = chrome.tabs.connect(tab.id, { name: "generate" });
 
-  let id: number = (typeof info.menuItemId === "number") ? info.menuItemId: parseInt(info.menuItemId);
+  const id: number = (typeof info.menuItemId === "number") ? info.menuItemId: parseInt(info.menuItemId);
   
-  // Setup text upon extension's icon
-  chrome.action.setBadgeBackgroundColor({color: config.ui.color.primary, tabId: tab.id});
-  chrome.action.setBadgeText({text: 'WIP', tabId: tab.id});
-
   try {
     const data: Data = await getData();
     const fetcher: Fetcher = new Fetcher(data.apiKey, config.openai.endpoint, config.openai.model);
@@ -46,13 +47,10 @@ chrome.contextMenus.onClicked.addListener(async (info: chrome.contextMenus.OnCli
     const publisher: Publisher = new Publisher();
     await publisher.publish(reader, port);
   } catch (error) {
-    port.postMessage(config.error.messages.default);
-    console.error("ERROR:\n", error);
+    console.error("ERROR: error from OpenAI servers\n", error);
+    port.postMessage("ERROR: error from OpenAI servers");
   }
 
   port.disconnect();
-
-  // Disable text upon extension's icon
-  chrome.action.setBadgeText({text: "", tabId: tab.id});
 
 });

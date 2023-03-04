@@ -1,4 +1,6 @@
-import { PromptDTO, Context } from "../../01-shared/types";
+import { PromptDTO, Context, Model } from "../../01-shared/types";
+// import { encode, decode } from "gpt-3-encoder";
+
 
 import { config } from "../../01-shared/config";
 
@@ -6,9 +8,9 @@ export class Fetcher {
 
   private readonly apiKey: string;
   private readonly endpoint: string;
-  private readonly model: string;
+  private readonly model: Model;
 
-  constructor(apiKey: string, endpoint: string, model: string) {
+  constructor(apiKey: string, endpoint: string, model: Model) {
     this.apiKey = apiKey;
     this.endpoint = endpoint;
     this.model = model;
@@ -18,11 +20,26 @@ export class Fetcher {
    * Opens a completion stream from GPT and returns a reader for it
    * @param prompt 
    * @returns reader for GPT completion stream
+   * 
+   * @todo add precise token count with gpt-3-encoder 
+   * Currently waiting for gpt-3-encoder to merge PR #33 to have a precise token count
+   * In the mean time, we estimate the token count by dividing the number of char 
+   * by 4 and adding a 10% margin.
+   * @link https://github.com/latitudegames/GPT-3-Encoder/issues/32
+   * @link https://github.com/latitudegames/GPT-3-Encoder/pull/33
    */
   public async getCompletion(prompt: PromptDTO, context: Context): Promise<ReadableStreamDefaultReader<string>> {
 
-    let promptText = this.substitute(prompt.value, context.substitution);
-    console.log("Prompt sent to OpenAI :", promptText);
+    const promptText = this.substitute(prompt.value, context.substitution);
+    console.log("promptText:\n", promptText);
+
+    // const promptTokens: number = encode(promptText).length;
+    // const completionTokens = this.model.sharedTokens - encode(promptText).length;
+    // Guard clause: check max tokens
+    // if (completionTokens <= 0) return this.getErrorStream(`ERROR: prompt is about ${promptTokens} tokens. This is above ${this.model.maxTokens} max tokens for prompt + completion\n`).getReader();
+    const promptTokens: number = Math.round( 1.1 * promptText.length / 4 );
+    const completionTokens: number = this.model.maxTokens - promptTokens - 200;
+
     const response = await fetch(this.endpoint, {
       method: 'POST',
       headers: {
@@ -30,15 +47,18 @@ export class Fetcher {
         Authorization: "Bearer " + this.apiKey,
       },
       body: JSON.stringify({
-        model: this.model,
+        model: this.model.name,
         prompt: promptText,
-        max_tokens: 2000,
+        max_tokens: completionTokens,
         stop: "\n\nµµµ",
         stream: true,
       }),
     });
 
-    if (response.body === null) return new ReadableStreamDefaultReader(this.getErrorStream());
+    if (response.body === null) {
+      console.error("ERROR: response.body is null\n");
+      return new ReadableStreamDefaultReader(this.getErrorStream("ERROR: error from OpenAI servers"));
+    }
     
     const reader: ReadableStreamDefaultReader<string> = response.body
       .pipeThrough(new TextDecoderStream())
@@ -54,14 +74,24 @@ export class Fetcher {
    * Transform a stream from string to JSON
    * @returns `TransformStream` to be used as argument of `ReadableStream.pipeThrough()`
    */
-  private openAiJSON(): TransformStream {
+  private openAiJSON(): TransformStream<string, IObject> {
     return new TransformStream({
       /**
        * @description transform 1 SSE string event into multiple JSON events
        */
-      transform(chunkString, controller) {
+      transform(chunkString: string, controller: TransformStreamDefaultController<IObject>) {
 
-        let messages: string[] = chunkString
+        console.log("openAiJSON chunkString:\n", chunkString);
+
+        // Guard clause: input is not a string
+        if (typeof chunkString !== "string") {
+          console.error("ERROR: OpenAI returned a non string\n:", chunkString);
+          controller.enqueue(new OpenAIJSONResponse(`ERROR: OpenAI returned "${JSON.stringify(chunkString)}"`));
+          controller.terminate();
+          return;
+        }
+
+        const messages: string[] = chunkString
           .replace(/\n\n$/g, "")      // Remove last 2 ending newlines
           .split("\n\n");             // Split every 2 newlines (each message is separated by 2 newlines)
 
@@ -79,13 +109,24 @@ export class Fetcher {
           if (message === "data: ") continue;
           
           // Remove start of message
-          let jsonString: string = message.replace(/^data: /g, "");
+          const jsonString: string = message.replace(/^data: /g, "");
+          let result: IObject | Array<any>;
 
           try {
-            controller.enqueue(JSON.parse(jsonString));
+            result = JSON.parse(jsonString) as IObject | Array<any>; // JSONs are objects or arrays
           } catch (error) {
+            // Don't process not valid JSON
+            console.error("ERROR: json is not valid:\n", jsonString, "\nContinuing without processing...");
             continue;
           }
+
+          // Guard clause : don't process arrays
+          if (Array.isArray(result)) {
+            console.error("ERROR: json is an array:\n", result, "\nContinuing without processing...");
+            continue;
+          }
+
+          controller.enqueue(result);
         };
 
       },
@@ -96,25 +137,34 @@ export class Fetcher {
    * Extract OpenAI completion from JSON stream
    * @returns `TransformStream` to be used as argument of `ReadableStream.pipeThrough()`
    */
-  private openAiText(): TransformStream {
+  private openAiText(): TransformStream<IObject, string> {
     return new TransformStream({
-      transform(chunkJSON, controller) {
+      transform(chunkJSON: IObject, controller: TransformStreamDefaultController<string>) {
 
         // Guard clause: return "Error" if error from OpenAI
         if(chunkJSON.error !== undefined) {
-          controller.enqueue(config.error.messages.default);
-          console.error("ERROR: OpenAI returned a JSON with an `error` property\n", chunkJSON);
+          console.error("ERROR: OpenAI response has .error property:\n", chunkJSON)
+          controller.enqueue(`ERROR: OpenAI returned "${JSON.parse(chunkJSON.error)}"`);
           controller.terminate();
+          return;
         }
 
+        const text: any = chunkJSON?.choices?.[0]?.text;
+
         // Guard clause: return "Error" if malformed JSON
-        let text: any = chunkJSON?.choices?.[0]?.text;
         if (typeof text !== "string") {
-          controller.enqueue(config.error.messages.default);
-          console.error("ERROR: OpenAI returned a JSON where `.choices.[0].text` is not a `string`\n", chunkJSON);
+          try {
+            console.error("ERROR: OpenAI response doesn't have .choices[0].text property:\n", chunkJSON)
+            controller.enqueue(`ERROR: OpenAI returned malformed json "${JSON.stringify(chunkJSON)}"`);
+          } catch(error) {
+            console.error("ERROR: OpenAI returned malformed json:\n", chunkJSON);
+            controller.enqueue(`ERROR: OpenAI returned malformed json`);
+          }
           controller.terminate();
+          return;
         }
-        else controller.enqueue(text);
+
+        controller.enqueue(text);
 
       },
     });
@@ -122,21 +172,38 @@ export class Fetcher {
 
   /**
    * Get a stream that sends only 1 string message stating an error
+   * @param message message streamed
    * @returns stream
    */
-  private getErrorStream(): ReadableStream<string> {
+  private getErrorStream(message: string): ReadableStream<string> {
     return new ReadableStream({
       start(controller: ReadableStreamDefaultController<string>) {
-        controller.enqueue(config.error.messages.default);
-        console.error("ERROR: fetch response.body is null\n");
+        controller.enqueue(message);
         controller.close();
       },
     });
   };
 
   private substitute(promptText: string, substitution: string): string {
-    // @ts-ignore: string.matchAll() requires adding a specific lib for Typescript
+    // @ts-ignore: string.matchAll() requires adding a specific lib for Typescript types
     return promptText.replaceAll(config.prompt.susbstitutionPlaceholder, substitution);
   };
 
+}
+
+class OpenAIJSONResponse {
+  public readonly choices: {text: string}[];
+
+  constructor(message: string) {
+    this.choices = [{ text: message }];
+  };
+
+};
+
+/**
+ * @interface IObject
+ * @description default `object` type does not allow properties
+ */
+interface IObject extends Object {
+  [key: string]: any;
 }

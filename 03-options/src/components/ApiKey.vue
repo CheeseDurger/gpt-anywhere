@@ -11,7 +11,7 @@ chrome.storage.sync.get(key).then(object => {
 
 function saveApiKey(): void {
   apiKey.value = (document.getElementById("apiKey") as HTMLInputElement).value;
-  let button: HTMLButtonElement = document.getElementById('save-apiKey') as HTMLButtonElement;
+  const button: HTMLButtonElement = document.getElementById('save-apiKey') as HTMLButtonElement;
   const tooltip = new Tooltip(button);
   tooltip.show();
   chrome.storage.sync.set({ [key]: apiKey.value }).then(() => {
@@ -22,7 +22,7 @@ function saveApiKey(): void {
 };
 
 function toggleApiKey(): void {
-  let input: HTMLInputElement = document.getElementById("apiKey") as HTMLInputElement;
+  const input: HTMLInputElement = document.getElementById("apiKey") as HTMLInputElement;
   if (input.type === "password") input.type = "text";
   else input.type = "password";
 };

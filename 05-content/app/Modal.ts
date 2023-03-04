@@ -1,8 +1,7 @@
-import { config } from '../../01-shared/config';
-
 // @ts-ignore
 import popupHtml from 'bundle-text:./modal/modal.html';
-// import popupHtml from './modal/modal.html?raw';
+
+const shadowRootHostId: string = "gpt-anywhere-shadow-root-7179470057";
 
 export class Modal {
   private readonly div: HTMLDivElement;
@@ -16,7 +15,7 @@ export class Modal {
   constructor() {
     // Create the div that will host the shadow DOM
     this.div = document.createElement("div");
-    this.div.setAttribute("id", config.ui.id.shadowRoot);
+    this.div.setAttribute("id", shadowRootHostId);
     document.body.appendChild(this.div);
 
     // Create the shadow root
@@ -26,12 +25,12 @@ export class Modal {
     const documentFragment: DocumentFragment = document.createRange().createContextualFragment(popupHtml);
     this.shadow.appendChild(documentFragment);
    
-    this.wrapper = this.shadow.querySelector(".wrapper") ?? (() => {throw new Error("Error : wrapper element not found")})();
+    this.wrapper = this.shadow.querySelector("#wrapper") ?? (() => {throw new Error("Error : wrapper element not found")})();
     this.content = this.shadow.querySelector("#completion") ?? (() => {throw new Error("Error : content element not found")})();
     this.cursor = this.shadow.querySelector("#cursor") ?? (() => {throw new Error("Error : cursor element not found")})();
     this.success = this.shadow.querySelector("#success") ?? (() => {throw new Error("Error : success element not found")})();
     
-    this.shadow.querySelectorAll(".overlay, #close").forEach(element => {
+    this.shadow.querySelectorAll("#overlay, #close").forEach(element => {
       element.addEventListener('click', () => this.close());
     });
     

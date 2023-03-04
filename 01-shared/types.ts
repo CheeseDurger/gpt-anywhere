@@ -6,3 +6,8 @@ export interface PromptDTO {
 export interface Context {
     substitution: string;
 };
+
+export interface Model {
+    name: string;
+    maxTokens: number;
+};

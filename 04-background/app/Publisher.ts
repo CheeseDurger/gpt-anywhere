@@ -1,5 +1,3 @@
-import { config } from "../../01-shared/config";
-
 // The observed normal response time from OpenAI is about 200-500 milliseconds, but it can vary greatly
 const timeoutMs: number = 1500;
 
@@ -15,13 +13,13 @@ export class Publisher {
 
     // Publish message from GPT to web page
     while (true) {
-      let timeout = new Promise((resolve, reject) => setTimeout(resolve, timeoutMs, ""));
-      let result: ReadableStreamReadResult<string> | unknown = await Promise.race([reader.read(), timeout]);
+      const timeout = new Promise((resolve, reject) => setTimeout(resolve, timeoutMs, ""));
+      const result: ReadableStreamReadResult<string> | unknown = await Promise.race([reader.read(), timeout]);
       
       // If timeout, then post timeout message and stop
       if (typeof result === "string") {
-        port.postMessage(config.error.messages.default);
-        console.error("ERROR: timeout from OpenAI response stream\n");
+        console.error("ERROR: timeout from OpenAI servers\n");
+        port.postMessage("ERROR: timeout from OpenAI servers\n");
         break;
       }
       
@@ -33,4 +31,4 @@ export class Publisher {
     }
   };
 
-}
+};

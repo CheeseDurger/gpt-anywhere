@@ -17,15 +17,15 @@ const emit = defineEmits<{
 const title: string = props.last ? 'Add new prompt' : 'Prompt ' + (props.index + 1).toString();
 
 function save() {
-  let input: HTMLInputElement = document.getElementById('prompt-name-' + props.index.toString()) as HTMLInputElement;
-  let textArea: HTMLTextAreaElement = document.getElementById('prompt-value-' + props.index.toString()) as HTMLTextAreaElement;
-  let newPrompt: PromptDTO = {
+  const input: HTMLInputElement = document.getElementById('prompt-name-' + props.index.toString()) as HTMLInputElement;
+  const textArea: HTMLTextAreaElement = document.getElementById('prompt-value-' + props.index.toString()) as HTMLTextAreaElement;
+  const newPrompt: PromptDTO = {
     name: input.value,
     value: textArea.value,
   }
 
   if (!props.last) {
-    let button: HTMLButtonElement = document.getElementById('save-' + props.index.toString()) as HTMLButtonElement;
+    const button: HTMLButtonElement = document.getElementById('save-' + props.index.toString()) as HTMLButtonElement;
     const tooltip = new Tooltip(button);
     tooltip.show();
     setTimeout(() => tooltip.hide(), 1000);
