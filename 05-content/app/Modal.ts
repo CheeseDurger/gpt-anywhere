@@ -70,7 +70,7 @@ export class Modal {
 
   public stopText(): void {
     this.cursor.hidden = true;
-  }
+  };
 
   private displaySuccess(): void {
     if (this.success?.hidden !== undefined) this.success.hidden = false;

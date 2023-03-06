@@ -1,7 +1,7 @@
 // The observed normal response time from OpenAI is about 200-500 milliseconds, but it can vary greatly
 const timeoutMs: number = 1500;
 
-export class Publisher {
+export class ChromePublisherAdapter {
 
   /**
    * Post messages on web page. An error message will be posted
@@ -9,7 +9,9 @@ export class Publisher {
    * @param reader 
    * @param port 
    */
-  public async publish(reader: ReadableStreamDefaultReader<string>, port: chrome.runtime.Port): Promise<void> {
+  public async publish(reader: ReadableStreamDefaultReader<string>, tabId: number): Promise<void> {
+
+    const port: chrome.runtime.Port = chrome.tabs.connect(tabId, { name: "generate" });
 
     // Publish message from GPT to web page
     while (true) {
@@ -29,6 +31,9 @@ export class Publisher {
       // Else post stream message
       port.postMessage((result as ReadableStreamReadResult<string>).value);
     }
+
+    port.disconnect();
+    
   };
 
 };

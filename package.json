@@ -5,7 +5,7 @@
   "scripts": {
     "build:global": "cd ./02-global && npm run build",
     "build:options": "cd ./03-options && npm run build",
-    "build:background": "cd ./04-background && npm run build",
+    "build:background": "cd ./04-background && npm run build:hexa",
     "build:content": "cd ./05-content && npm run build",
     "build": "run-p build:*",
     "dev:global": "cd ./02-global && npm run dev",

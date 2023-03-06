@@ -1,10 +1,8 @@
-import { PromptDTO, Context, Model } from "../../01-shared/types";
 // import { encode, decode } from "gpt-3-encoder";
+import { Model } from "../../02-ports/output/DTO";
+import { AiPort } from "../../02-ports/output/Ai";
 
-
-import { config } from "../../01-shared/config";
-
-export class Fetcher {
+export class OpenAIAdapter implements AiPort {
 
   private readonly apiKey: string;
   private readonly endpoint: string;
@@ -14,7 +12,7 @@ export class Fetcher {
     this.apiKey = apiKey;
     this.endpoint = endpoint;
     this.model = model;
-  }
+  };
 
   /**
    * Opens a completion stream from GPT and returns a reader for it
@@ -28,16 +26,13 @@ export class Fetcher {
    * @link https://github.com/latitudegames/GPT-3-Encoder/issues/32
    * @link https://github.com/latitudegames/GPT-3-Encoder/pull/33
    */
-  public async getCompletion(prompt: PromptDTO, context: Context): Promise<ReadableStreamDefaultReader<string>> {
-
-    const promptText = this.substitute(prompt.value, context.substitution);
-    console.log("promptText:\n", promptText);
+  public async getCompletion(prompt: string): Promise<ReadableStreamDefaultReader<string>> {
 
     // const promptTokens: number = encode(promptText).length;
     // const completionTokens = this.model.sharedTokens - encode(promptText).length;
     // Guard clause: check max tokens
     // if (completionTokens <= 0) return this.getErrorStream(`ERROR: prompt is about ${promptTokens} tokens. This is above ${this.model.maxTokens} max tokens for prompt + completion\n`).getReader();
-    const promptTokens: number = Math.round( 1.1 * promptText.length / 4 );
+    const promptTokens: number = Math.round( 1.1 * prompt.length / 4 );
     const completionTokens: number = this.model.maxTokens - promptTokens - 200;
 
     const response = await fetch(this.endpoint, {
@@ -48,7 +43,7 @@ export class Fetcher {
       },
       body: JSON.stringify({
         model: this.model.name,
-        prompt: promptText,
+        prompt: prompt,
         max_tokens: completionTokens,
         stop: "\n\nµµµ",
         stream: true,
@@ -81,7 +76,7 @@ export class Fetcher {
        */
       transform(chunkString: string, controller: TransformStreamDefaultController<IObject>) {
 
-        console.log("openAiJSON chunkString:\n", chunkString);
+        console.log("OpenAI SSE:\n", chunkString);
 
         // Guard clause: input is not a string
         if (typeof chunkString !== "string") {
@@ -184,10 +179,6 @@ export class Fetcher {
     });
   };
 
-  private substitute(promptText: string, substitution: string): string {
-    // @ts-ignore: string.matchAll() requires adding a specific lib for Typescript types
-    return promptText.replaceAll(config.prompt.susbstitutionPlaceholder, substitution);
-  };
 
 }
 
@@ -206,4 +197,4 @@ class OpenAIJSONResponse {
  */
 interface IObject extends Object {
   [key: string]: any;
-}
+};
