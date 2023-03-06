@@ -2,8 +2,7 @@
   "name": "background",
   "private": true,
   "scripts": {
-    "build": "esbuild background.ts --bundle --target=chrome58,firefox57,safari11,edge16 --outfile=../dist/background/background.js",
-    "build:hexa": "esbuild start.ts --bundle --target=chrome58,firefox57,safari11,edge16 --outfile=../dist/background/background.js",
+    "build": "esbuild start.ts --bundle --target=chrome58,firefox57,safari11,edge16 --outfile=../dist/background/background.js",
     "dev": "nodemon -e js,ts,html,css,json,vue,ico,png --exec \"npm run build\""
   },
   "devDependencies": {
