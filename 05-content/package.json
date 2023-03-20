@@ -2,10 +2,10 @@
   "name": "content",
   "private": true,
   "browserslist": "> 0.5%, last 2 versions, not dead",
-  "source": "content.ts",
+  "source": "start.ts",
   "scripts": {
     "debug": "parcel serve tests/index.html --public-url / --dist-dir dist",
-    "build": "parcel build --no-optimize --no-source-maps --no-scope-hoist --dist-dir ../dist/content",
+    "build": "parcel build --no-optimize --no-source-maps --dist-dir ../dist/content",
     "dev": "nodemon -e js,ts,html,css,json,vue,ico,png --exec \"npm run build\""
   },
   "devDependencies": {

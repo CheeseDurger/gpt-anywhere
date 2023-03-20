@@ -15,6 +15,7 @@ chrome.storage.sync.get(key).then(object => {
 });
 
 const emptyPrompt: PromptDTO = {
+  id: Number.MAX_SAFE_INTEGER,
   name: "",
   value: "",
 };

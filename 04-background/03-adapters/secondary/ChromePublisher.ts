@@ -1,7 +1,8 @@
-// The observed normal response time from OpenAI is about 200-500 milliseconds, but it can vary greatly
-const timeoutMs: number = 1500;
+import { config } from "../../../01-shared/config";
+import { OpenModalRequest, PortName } from "../../../01-shared/types";
+import { PublisherPort } from "../../02-ports/output/Publisher";
 
-export class ChromePublisherAdapter {
+export class ChromePublisherAdapter implements PublisherPort {
 
   /**
    * Post messages on web page. An error message will be posted
@@ -9,15 +10,15 @@ export class ChromePublisherAdapter {
    * @param reader 
    * @param port 
    */
-  public async publish(reader: ReadableStreamDefaultReader<string>, tabId: number): Promise<void> {
+  public async publish(tabId: number, reader: ReadableStreamDefaultReader<string>): Promise<void> {
 
-    const port: chrome.runtime.Port = chrome.tabs.connect(tabId, { name: "generate" });
+    const port: chrome.runtime.Port = chrome.tabs.connect(tabId, { name: PortName.COMPLETE });
 
     // Publish message from GPT to web page
     while (true) {
-      const timeout = new Promise((resolve, reject) => setTimeout(resolve, timeoutMs, ""));
-      const result: ReadableStreamReadResult<string> | unknown = await Promise.race([reader.read(), timeout]);
-      
+      const timeout = new Promise<string>((resolve, reject) => setTimeout(resolve, config.openai.timeout, ""));
+      const result: ReadableStreamReadResult<string> | string = await Promise.race([reader.read(), timeout]);
+
       // If timeout, then post timeout message and stop
       if (typeof result === "string") {
         console.error("ERROR: timeout from OpenAI servers\n");
@@ -26,14 +27,17 @@ export class ChromePublisherAdapter {
       }
       
       // If stream is closed, then stop
-      if ((result as ReadableStreamReadResult<string>).done) break;
+      if (result.done) break;
 
       // Else post stream message
-      port.postMessage((result as ReadableStreamReadResult<string>).value);
+      port.postMessage(result.value);
     }
 
     port.disconnect();
     
   };
 
+  public async openModal(tabId: number, request: OpenModalRequest): Promise<void> {
+    await chrome.tabs.sendMessage(tabId, request);
+  };
 };

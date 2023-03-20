@@ -1,14 +1,16 @@
+import { OpenModalRequest } from "../../../01-shared/types";
 import { ChromePublisherAdapter } from "../../03-adapters/secondary/ChromePublisher";
 
 export interface PublishRequest {
   reader: ReadableStreamDefaultReader<string>;
   location: chrome.tabs.Tab;
-}
+};
 
 export interface PublisherPort {
-  publish: (reader: ReadableStreamDefaultReader<string>, tabId: number) => Promise<void>;
+  publish: (tabId: number, reader: ReadableStreamDefaultReader<string>) => Promise<void>;
+  openModal: (tabId: number, request: OpenModalRequest) => Promise<void>;
 };
 
 export function publisherFactory(): PublisherPort {
   return new ChromePublisherAdapter();
-}
+};

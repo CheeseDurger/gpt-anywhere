@@ -1,12 +1,12 @@
-import { chromeStorageAdapter } from "../../03-adapters/secondary/ChromeStorage";
+import { ChromeStorageAdapter } from "../../03-adapters/secondary/ChromeStorage";
 import { DataDTO } from "./DTO";
 
 export interface StoragePort {
-  data: () => Promise<DataDTO>;
+  get: () => Promise<DataDTO>;
+  save: (data: DataDTO) => Promise<void>;
+  validate: (data: unknown) => DataDTO;
 };
 
 export function storageFactory(): StoragePort {
-  return chromeStorageAdapter;
+  return new ChromeStorageAdapter();
 };
-export { DataDTO };
-

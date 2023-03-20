@@ -24,5 +24,8 @@ To build the Chrome extension:
 1. Run `npm run build`
 2. Load the extension from `./dist` folder
 
+# Data schema
+The extension saves the user's api key and prompts in the browser synced storage.
+
 # License
 [Unlicense](LICENSE)

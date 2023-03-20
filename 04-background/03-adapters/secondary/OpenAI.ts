@@ -1,6 +1,7 @@
 // import { encode, decode } from "gpt-3-encoder";
 import { Model } from "../../02-ports/output/DTO";
 import { AiPort } from "../../02-ports/output/Ai";
+import { config } from "../../../01-shared/config";
 
 export class OpenAIAdapter implements AiPort {
 
@@ -31,28 +32,42 @@ export class OpenAIAdapter implements AiPort {
     // const promptTokens: number = encode(promptText).length;
     // const completionTokens = this.model.sharedTokens - encode(promptText).length;
     // Guard clause: check max tokens
-    // if (completionTokens <= 0) return this.getErrorStream(`ERROR: prompt is about ${promptTokens} tokens. This is above ${this.model.maxTokens} max tokens for prompt + completion\n`).getReader();
+    // if (completionTokens <= 0) return this.getErrorStream(`ERROR: prompt is about ${promptTokens} tokens. This is above ${this.model.maxTokens} max tokens for prompt + completion\n`);
     const promptTokens: number = Math.round( 1.1 * prompt.length / 4 );
     const completionTokens: number = this.model.maxTokens - promptTokens - 200;
 
-    const response = await fetch(this.endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: "Bearer " + this.apiKey,
-      },
-      body: JSON.stringify({
-        model: this.model.name,
-        prompt: prompt,
-        max_tokens: completionTokens,
-        stop: "\n\nµµµ",
-        stream: true,
-      }),
-    });
+    // Initialize timeout
+    const controller: AbortController = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), config.openai.timeout);
+
+    let response: Response;
+    try {
+      response = await fetch(this.endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: "Bearer " + this.apiKey,
+        },
+        body: JSON.stringify({
+          model: this.model.name,
+          prompt: prompt,
+          max_tokens: completionTokens,
+          stop: "\n\nµµµ",
+          stream: true,
+        }),
+        signal: controller.signal, // timeout
+      });
+    } catch (error) {
+      console.error("ERROR: timeout from OpenAI servers\n", error);
+      return this.getErrorStream("ERROR: timeout from OpenAI servers\n");
+    }
+
+    // Clear timeout
+    clearTimeout(timeoutId);
 
     if (response.body === null) {
       console.error("ERROR: response.body is null\n");
-      return new ReadableStreamDefaultReader(this.getErrorStream("ERROR: error from OpenAI servers"));
+      return this.getErrorStream("ERROR: error from OpenAI servers\n");
     }
     
     const reader: ReadableStreamDefaultReader<string> = response.body
@@ -170,13 +185,13 @@ export class OpenAIAdapter implements AiPort {
    * @param message message streamed
    * @returns stream
    */
-  private getErrorStream(message: string): ReadableStream<string> {
+  private getErrorStream(message: string): ReadableStreamDefaultReader<string> {
     return new ReadableStream({
       start(controller: ReadableStreamDefaultController<string>) {
         controller.enqueue(message);
         controller.close();
       },
-    });
+    }).getReader();
   };
 
 

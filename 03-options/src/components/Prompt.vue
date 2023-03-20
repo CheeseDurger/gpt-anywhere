@@ -20,6 +20,7 @@ function save() {
   const input: HTMLInputElement = document.getElementById('prompt-name-' + props.index.toString()) as HTMLInputElement;
   const textArea: HTMLTextAreaElement = document.getElementById('prompt-value-' + props.index.toString()) as HTMLTextAreaElement;
   const newPrompt: PromptDTO = {
+    id: props.index,
     name: input.value,
     value: textArea.value,
   }
