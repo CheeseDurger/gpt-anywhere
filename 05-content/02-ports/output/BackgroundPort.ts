@@ -1,9 +1,9 @@
 import { ChromeBackgroundAdapter } from "../../03-adapters/secondary/ChromeBackgroundAdapter";
 
 export interface BackgroundPort {
-  complete: () => Promise<void>;
+  complete: () => void;
 };
 
-export function backgroundFactory(): BackgroundPort {
-  return new ChromeBackgroundAdapter();
+export function backgroundFactory(writer: WritableStreamDefaultWriter<string>): BackgroundPort {
+  return new ChromeBackgroundAdapter(writer);
 };
