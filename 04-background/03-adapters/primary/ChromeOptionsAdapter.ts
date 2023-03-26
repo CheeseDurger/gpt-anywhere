@@ -7,7 +7,7 @@ export class ChromeOptionsAdapter {
 
   private onBrowserEvents = (callback: () => void): void => {
     chrome.runtime.onInstalled.addListener(async (details) => {
-      if (details.reason === "install" || details.reason === "update") callback();
+      if (details.reason === "install") callback();
     });
 
     chrome.action.onClicked.addListener(callback);

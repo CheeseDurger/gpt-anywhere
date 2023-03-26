@@ -1,0 +1,16 @@
+{
+  "name": "shared",
+  "private": true,
+  "scripts": {
+    "test": "jest --watchAll"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^18.15.10",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.0.5",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.2"
+  },
+  "dependencies": {}
+}

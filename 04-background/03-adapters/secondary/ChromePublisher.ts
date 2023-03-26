@@ -1,5 +1,6 @@
 import { config } from "../../../01-shared/config";
-import { OpenModalRequest, PortName } from "../../../01-shared/types";
+import { PortName } from "../../../01-shared/types";
+import { OpenModalRequest } from "../../../01-shared/ApiDTO/ApiRequest";
 import { PublisherPort } from "../../02-ports/output/Publisher";
 
 export class ChromePublisherAdapter implements PublisherPort {

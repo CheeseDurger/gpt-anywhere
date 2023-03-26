@@ -1,4 +1,4 @@
-import { PromptDTO } from "../../../01-shared/types";
+import { PromptDTO } from "../../../01-shared/StorageDTO";
 import { ChromeContextMenusAdapter } from "../../03-adapters/secondary/ChromeContextMenus";
 
 export interface ContextMenusPort {

@@ -1,5 +1,5 @@
+import { DataDTO } from "../../01-shared/StorageDTO";
 import { contextMenusFactory } from "../02-ports/output/ContextMenus";
-import { DataDTO } from "../02-ports/output/DTO";
 import { storageFactory } from "../02-ports/output/Storage";
 
 export class SetContextMenusUseCase {

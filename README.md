@@ -24,8 +24,20 @@ To build the Chrome extension:
 1. Run `npm run build`
 2. Load the extension from `./dist` folder
 
-# Data schema
+# Architecture
 The extension saves the user's api key and prompts in the browser synced storage.
+```mermaid
+flowchart BT
+  Storage([Local storage]) --- Background[Background script]
+  OpenAI([OpenAI]) --- Background
+  Background ----|API calls| Options[Options page]
+  Background ----|API calls| Page1(Page 1)
+  Background ----|API calls| Page2(Page 2)
+  Background ----|API calls| Page3(Page ...)
+  Background ----|API calls| PageN(Page N)
+```
+The background script exposes an API called by the Options page and every browsed page.
+Scripts are communicating through this API with `runtime.sendMessage()` and `runtime.connect()`.
 
 # License
 [Unlicense](LICENSE)

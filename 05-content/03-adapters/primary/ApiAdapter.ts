@@ -1,5 +1,5 @@
 import { OpenAndCompleteUseCase } from "../../01-use-cases/OpenAndCompleteUseCase";
-import { ApiRequest, Endpoint } from "../../../01-shared/types";
+import { ApiRequest, Endpoint } from "../../../01-shared/ApiDTO/ApiRequest";
 
 export class ApiAdapter {
   /**
@@ -22,7 +22,7 @@ export class ApiAdapter {
 
     switch (request.endpoint) {
 
-      case Endpoint.OPENMODAL:
+      case Endpoint.OPEN_MODAL:
         new OpenAndCompleteUseCase().handle();
         return false;
         break;
@@ -35,4 +35,4 @@ export class ApiAdapter {
 
   };
 
-}
+};

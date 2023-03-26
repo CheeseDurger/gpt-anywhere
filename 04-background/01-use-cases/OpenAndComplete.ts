@@ -1,9 +1,10 @@
+/// <reference types="chrome-types" />
 import { config } from "../../01-shared/config";
-import { CompleteRequest, Endpoint, OpenModalRequest } from "../../01-shared/types";
+import { DataDTO } from "../../01-shared/StorageDTO";
+import { CompleteRequest, OpenModalRequest } from "../../01-shared/ApiDTO/ApiRequest";
 import { AiPort, aiFactory } from "../02-ports/output/Ai";
 import { PublisherPort, publisherFactory } from "../02-ports/output/Publisher";
 import { storageFactory } from "../02-ports/output/Storage";
-import { DataDTO } from "../02-ports/output/DTO";
 
 /**
  * @description publish a completion from 
@@ -16,13 +17,10 @@ export class OpenAndCompleteUseCase {
   public async handle(request: CompleteRequest): Promise<void> {
 
     // Open modal
-    const openModalRequest: OpenModalRequest = {
-      endpoint: Endpoint.OPENMODAL,
-      payload: {
-        promptId: request.payload.promptId,
-        selectionText: request.payload.selectionText,
-      },
-    };
+    const openModalRequest: OpenModalRequest = new OpenModalRequest(
+      request.payload.promptId,
+      request.payload.selectionText,
+    );
     await publisherFactory().openModal(request.payload.tabId, openModalRequest);
 
     // Build prompt

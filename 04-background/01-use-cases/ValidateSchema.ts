@@ -1,4 +1,4 @@
-import { DataDTO } from "../02-ports/output/DTO";
+import { DataDTO } from "../../01-shared/StorageDTO";
 import { storageFactory, StoragePort } from "../02-ports/output/Storage";
 
 export class ValidateSchemaUseCase {

@@ -1,4 +1,4 @@
-import { OpenModalRequest } from "../../../01-shared/types";
+import { OpenModalRequest } from "../../../01-shared/ApiDTO/ApiRequest";
 import { ChromePublisherAdapter } from "../../03-adapters/secondary/ChromePublisher";
 
 export interface PublishRequest {

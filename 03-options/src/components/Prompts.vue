@@ -1,18 +1,9 @@
 <script setup lang="ts">
-import { reactive, ref, type Ref, toRaw } from 'vue';
-
-import type { PromptDTO } from "../../../01-shared/types";
-
+import type { PromptDTO } from "../../../01-shared/StorageDTO";
 import Prompt from './Prompt.vue'
+import { useStorageStore } from '../store';
 
-const key: string = "prompts";
-
-let prompts: PromptDTO[] = reactive([]);
-const nextIndex: Ref<number> = ref(0);
-chrome.storage.sync.get(key).then(object => {
-  if (key in object) prompts = reactive(object[key]);
-  nextIndex.value = prompts.length;
-});
+const storeStorage = useStorageStore();
 
 const emptyPrompt: PromptDTO = {
   id: Number.MAX_SAFE_INTEGER,
@@ -21,15 +12,8 @@ const emptyPrompt: PromptDTO = {
 };
 
 function savePrompt(prompt: PromptDTO, index: number) {
-  prompts[index] = prompt;
-  chrome.storage.sync.set({ [key]: toRaw(prompts) });
-  nextIndex.value = prompts.length;
-};
-
-function deletePrompt(index: number) {
-  prompts.splice(index, 1);
-  chrome.storage.sync.set({ [key]: toRaw(prompts) });
-  nextIndex.value = prompts.length;
+  console.log('savePrompt', prompt, index);
+  storeStorage.prompts[index].value = prompt.value;
 };
 
 </script>
@@ -39,10 +23,8 @@ function deletePrompt(index: number) {
   <div class="my-5">
     <h2 class="h4">Prompts</h2>
 
-    <Prompt v-for="(prompt, index) in prompts" :index="index" :last="false" :prompt="prompt" @savePrompt="savePrompt"
-      @deletePrompt="deletePrompt" />
-    <Prompt :index="nextIndex" :last="true" :prompt="emptyPrompt" @savePrompt="savePrompt"
-      @deletePrompt="deletePrompt" />
+    <Prompt v-for="(prompt, index) in storeStorage.prompts" :index="index" :last="false" :prompt="prompt" />
+    <Prompt :index="storeStorage.prompts.length" :last="true" :prompt="emptyPrompt" />
 
   </div>
 </template>

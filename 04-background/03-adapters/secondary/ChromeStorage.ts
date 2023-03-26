@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { DataDTO } from "../../02-ports/output/DTO";
+import { DataDTO } from "../../../01-shared/StorageDTO";
 import { StoragePort } from "../../02-ports/output/Storage";
 
 /**
@@ -9,7 +9,9 @@ import { StoragePort } from "../../02-ports/output/Storage";
 export class ChromeStorageAdapter implements StoragePort {
 
   public async get(): Promise<DataDTO> {
-    return await chrome.storage.sync.get() as DataDTO;
+    const response = await chrome.storage.sync.get();
+    if (DataDTO.isDataDTO(response)) return response;
+    else return new DataDTO("", []);
   };
 
   public async save(data: DataDTO): Promise<void> {
@@ -21,12 +23,12 @@ export class ChromeStorageAdapter implements StoragePort {
     const index = schemas.findLastIndex( schema => schema.safeParse(data).success );
 
     // Guard clause : return empty data object if no schema validated
-    if (index === -1) return new DataDTO();
+    if (index === -1) return new DataDTO("", []);
 
     for (let i = index; i < migrations.length; i++) {
       const transform = migrations[i].safeParse(data);
       if (transform.success) data = transform.data;
-      else return new DataDTO();
+      else return new DataDTO("", []);
     }
     return data as DataDTO;
   };

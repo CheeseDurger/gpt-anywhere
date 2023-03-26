@@ -1,5 +1,5 @@
+import { DataDTO } from "../../../01-shared/StorageDTO";
 import { ChromeStorageAdapter } from "../../03-adapters/secondary/ChromeStorage";
-import { DataDTO } from "./DTO";
 
 export interface StoragePort {
   get: () => Promise<DataDTO>;

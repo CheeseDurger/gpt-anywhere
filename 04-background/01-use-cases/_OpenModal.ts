@@ -1,4 +1,4 @@
-import { OpenModalRequest } from "../../01-shared/types";
+import { OpenModalRequest } from "../../01-shared/ApiDTO/ApiRequest";
 
 export class OpenModal {
 
@@ -10,4 +10,3 @@ export class OpenModal {
   };
 
 };
-

@@ -1,5 +1,5 @@
 import { OpenAndCompleteUseCase } from "../../01-use-cases/OpenAndComplete";
-import { CompleteRequest, Endpoint } from "../../../01-shared/types";
+import { CompleteRequest } from "../../../01-shared/ApiDTO/ApiRequest";
 
 export class ChromeOpenAndCompleteAdapter {
 
@@ -20,14 +20,11 @@ export class ChromeOpenAndCompleteAdapter {
     if (tab?.id === undefined) return;
 
 
-    const request: CompleteRequest = {
-      endpoint: Endpoint.COMPLETE,
-      payload: {
-        promptId: parseInt(info.menuItemId.toString()),
-        selectionText: info.selectionText ?? "",
-        tabId: tab.id,
-      },
-    };
+    const request: CompleteRequest = new CompleteRequest(
+      parseInt(info.menuItemId.toString()),
+      info.selectionText ?? "",
+      tab.id,
+    );
     await new OpenAndCompleteUseCase().handle(request);
 
   }
