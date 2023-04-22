@@ -1,18 +1,27 @@
 import { config } from "../../../01-shared/config";
 import { PortName } from "../../../01-shared/types";
-import { OpenModalRequest } from "../../../01-shared/ApiDTO/ApiRequest";
+import { OpenRequest } from "../../../01-shared/ApiDTO/ApiRequest";
 import { PublisherPort } from "../../02-ports/output/Publisher";
 
 export class ChromePublisherAdapter implements PublisherPort {
+
+  /**
+   * Send request to content script to open the modal
+   * @param tabId tab id to send the request to
+   * @param request request to be sent
+   */
+  public async openModal(tabId: number, request: OpenRequest): Promise<void> {
+    await chrome.tabs.sendMessage(tabId, request);
+  };
 
   /**
    * Post messages on web page. An error message will be posted
    * if OpenAI is too slow to send messages.
    * @param reader 
    * @param port 
-   */
+  */
   public async publish(tabId: number, reader: ReadableStreamDefaultReader<string>): Promise<void> {
-
+   
     const port: chrome.runtime.Port = chrome.tabs.connect(tabId, { name: PortName.COMPLETE });
 
     // Publish message from GPT to web page
@@ -38,7 +47,4 @@ export class ChromePublisherAdapter implements PublisherPort {
     
   };
 
-  public async openModal(tabId: number, request: OpenModalRequest): Promise<void> {
-    await chrome.tabs.sendMessage(tabId, request);
-  };
 };

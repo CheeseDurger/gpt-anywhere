@@ -1,7 +1,7 @@
 /// <reference types="chrome-types" />
 import { config } from "../../01-shared/config";
 import { DataDTO } from "../../01-shared/StorageDTO";
-import { CompleteRequest, OpenModalRequest } from "../../01-shared/ApiDTO/ApiRequest";
+import { CompleteRequest, OpenRequest } from "../../01-shared/ApiDTO/ApiRequest";
 import { AiPort, aiFactory } from "../02-ports/output/Ai";
 import { PublisherPort, publisherFactory } from "../02-ports/output/Publisher";
 import { storageFactory } from "../02-ports/output/Storage";
@@ -17,7 +17,7 @@ export class OpenAndCompleteUseCase {
   public async handle(request: CompleteRequest): Promise<void> {
 
     // Open modal
-    const openModalRequest: OpenModalRequest = new OpenModalRequest(
+    const openModalRequest: OpenRequest = new OpenRequest(
       request.payload.promptId,
       request.payload.selectionText,
     );

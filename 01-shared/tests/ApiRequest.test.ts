@@ -1,4 +1,4 @@
-import { ApiRequest, CompleteRequest, Endpoint, OpenModalRequest, SaveDataRequest } from "../ApiDTO/ApiRequest";
+import { ApiRequest, CompleteRequest, Endpoint, OpenRequest, SaveDataRequest } from "../ApiDTO/ApiRequest";
 import { DataDTO } from "../StorageDTO";
 
 describe('ApiRequest', () => {
@@ -16,17 +16,17 @@ describe('ApiRequest', () => {
     expect(ApiRequest.isApiRequest(request)).toBe(false);
   });
 
-  test('OpenModalRequest', () => {
-    request = new OpenModalRequest(0, "");
-    expect(OpenModalRequest.isOpenModalRequest(request)).toBe(true);
+  test('OpenRequest', () => {
+    request = new OpenRequest(0, "");
+    expect(OpenRequest.isOpenRequest(request)).toBe(true);
     request = { endpoint: Endpoint.OPEN_MODAL, payload: {promptId: 0, selectionText: "", ok: "ok"}, ok: "ok"};
-    expect(OpenModalRequest.isOpenModalRequest(request)).toBe(true);
+    expect(OpenRequest.isOpenRequest(request)).toBe(true);
     request = { endpoint: Endpoint.OPEN_MODAL, payload: {promptId: 0, selectionText: 1}};
-    expect(OpenModalRequest.isOpenModalRequest(request)).toBe(false);
+    expect(OpenRequest.isOpenRequest(request)).toBe(false);
     request = { endpoint: Endpoint.OPEN_MODAL, payload: {promptId: "ok", selectionText: ""}};
-    expect(OpenModalRequest.isOpenModalRequest(request)).toBe(false);
+    expect(OpenRequest.isOpenRequest(request)).toBe(false);
     request = { endpoint: Endpoint.SAVE_DATA, payload: {promptId: 0, selectionText: ""}};
-    expect(OpenModalRequest.isOpenModalRequest(request)).toBe(false);
+    expect(OpenRequest.isOpenRequest(request)).toBe(false);
   });
 
   test('CompleteRequest', () => {

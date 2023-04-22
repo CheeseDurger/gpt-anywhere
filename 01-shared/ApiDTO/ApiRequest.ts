@@ -1,6 +1,6 @@
 import { DataDTO } from "../StorageDTO";
 
-export class OpenModalRequest implements ApiRequest {
+export class OpenRequest implements ApiRequest {
   public endpoint = Endpoint.OPEN_MODAL;
   public payload: {promptId: number; selectionText: string; };
 
@@ -8,7 +8,7 @@ export class OpenModalRequest implements ApiRequest {
     this.payload = {promptId, selectionText};
   };
 
-  static isOpenModalRequest(request: unknown): request is OpenModalRequest {
+  static isOpenRequest(request: unknown): request is OpenRequest {
     return ApiRequest.isApiRequest(request)
       && request.endpoint === Endpoint.OPEN_MODAL
       && typeof request.payload === "object"

@@ -13,7 +13,7 @@ export class ChromeOpenAndCompleteAdapter {
 
   };
 
-  private async complete(info: chrome.contextMenus.OnClickData, tab: chrome.tabs.Tab | undefined) {
+  private async complete(info: chrome.contextMenus.OnClickData, tab: chrome.tabs.Tab | undefined): Promise<void> {
     // Guard clause:
     // - Tabs might be undefined (eg. click outside a tab)
     // - Tabs might not have ids (eg. tabs without ids)
