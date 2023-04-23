@@ -1,5 +1,5 @@
 import { OpenAndCompleteUseCase } from "../../01-use-cases/OpenAndComplete";
-import { ApiRequest, CompleteRequest, Endpoint, SaveDataRequest } from "../../../01-shared/ApiDTO/ApiRequest";
+import { ApiRequest, CompleteFromTabRequest, CompleteRequest, Endpoint, SaveDataRequest } from "../../../01-shared/ApiDTO/ApiRequest";
 import { ApiResponse, DataResponse } from "../../../01-shared/ApiDTO/ApiResponse";
 import { GetData } from "../../01-use-cases/GetData";
 import { SetData } from "../../01-use-cases/SetData";
@@ -23,12 +23,14 @@ export class ApiAdapter {
     sender: chrome.runtime.MessageSender,
     sendResponse: (ApiResponse: ApiResponse) => void,
   ): boolean {
+    console.log("request", request);
     switch (request.endpoint) {
+
 
       case Endpoint.COMPLETE:
 
         // Guard clause
-        if (!CompleteRequest.isCompleteRequest(request)) {
+        if (!CompleteFromTabRequest.isCompleteFromTabRequest(request)) {
           console.error("ERROR: payload malformed");
           sendResponse(new ApiResponse(false, {message: "ERROR: payload malformed"}));
           return false;
@@ -41,7 +43,12 @@ export class ApiAdapter {
           return false;
         };
 
-        new OpenAndCompleteUseCase().handle(request);
+        const completeRequest = new CompleteRequest(
+          request.payload.promptId,
+          request.payload.selectionText,
+          sender.tab.id
+        );
+        new OpenAndCompleteUseCase().handle(completeRequest);
         return false;
         break;
     

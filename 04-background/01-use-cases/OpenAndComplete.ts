@@ -17,11 +17,11 @@ export class OpenAndCompleteUseCase {
   public async handle(request: CompleteRequest): Promise<void> {
 
     // Open modal
-    const openModalRequest: OpenRequest = new OpenRequest(
+    const openRequest: OpenRequest = new OpenRequest(
       request.payload.promptId,
       request.payload.selectionText,
     );
-    await publisherFactory().openModal(request.payload.tabId, openModalRequest);
+    await publisherFactory().openModal(request.payload.tabId, openRequest);
 
     // Build prompt
     const data: DataDTO = await storageFactory().get();

@@ -4,6 +4,7 @@ import { OpenRequest } from "../../../01-shared/ApiDTO/ApiRequest";
 import { OpenUseCase } from "../../01-use-cases/OpenUseCase";
 
 export class ApiAdapter {
+
   /**
    * Register message handlers for the extension's API.
    */
@@ -21,8 +22,11 @@ export class ApiAdapter {
 
   };
 
-  private open(request: unknown, sender:  chrome.runtime.MessageSender, sendResponse: (response: any) => void): boolean {
+  private open = (request: unknown, sender: chrome.runtime.MessageSender, sendResponse: (response: any) => void): boolean => {
+
+    // Guard clause: request is an open request
     if (!OpenRequest.isOpenRequest(request)) return false;
+
     new OpenUseCase().handle(request);
     return false;
   };
@@ -30,29 +34,21 @@ export class ApiAdapter {
   private complete = async (port: chrome.runtime.Port): Promise<void> => {
 
     // Guard clause: port opened from extension
-    if (port?.sender?.id !==  chrome.runtime.id) return;
+    if (port?.sender?.id !==  chrome.runtime.id) {
+      console.error("Port opened from wrong extension");
+      return;
+    };
 
     // Guard clause: right port name
-    if (port.name !== PortName.COMPLETE) return;
+    if (port.name !== PortName.COMPLETE) {
+      console.error("Port opened with wrong name");
+      return;
+    };
 
-    // const reader: ReadableStreamDefaultReader<string> = this.getReader(port);
     const reader: ReadableStreamDefaultReader<string> = new CompletionReader(port);
     await new CompleteUseCase().handle(reader);
 
   };
-
-  // private getReader(port: chrome.runtime.Port): ReadableStreamDefaultReader<string> {
-  //   return new ReadableStream({
-  //     start(controller) {
-  //       port.onMessage.addListener((message: string) => {
-  //         controller.enqueue(message);
-  //       });
-  //       port.onDisconnect.addListener( () => {
-  //         controller.close();
-  //       });
-  //     },
-  //   }).getReader();
-  // };
 
 };
 

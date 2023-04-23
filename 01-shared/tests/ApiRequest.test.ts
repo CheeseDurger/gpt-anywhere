@@ -1,4 +1,4 @@
-import { ApiRequest, CompleteRequest, Endpoint, OpenRequest, SaveDataRequest } from "../ApiDTO/ApiRequest";
+import { ApiRequest, CompleteFromTabRequest, CompleteRequest, Endpoint, OpenRequest, SaveDataRequest } from "../ApiDTO/ApiRequest";
 import { DataDTO } from "../StorageDTO";
 
 describe('ApiRequest', () => {
@@ -27,6 +27,19 @@ describe('ApiRequest', () => {
     expect(OpenRequest.isOpenRequest(request)).toBe(false);
     request = { endpoint: Endpoint.SAVE_DATA, payload: {promptId: 0, selectionText: ""}};
     expect(OpenRequest.isOpenRequest(request)).toBe(false);
+  });
+
+  test('CompleteFromTabRequest', () => {
+    request = new CompleteFromTabRequest(0, "");
+    expect(CompleteFromTabRequest.isCompleteFromTabRequest(request)).toBe(true);
+    request = { endpoint: Endpoint.COMPLETE, payload: {promptId: 0, selectionText: "", tabId: 0}, ok: "ok"};
+    expect(CompleteFromTabRequest.isCompleteFromTabRequest(request)).toBe(true);
+    request = { endpoint: Endpoint.COMPLETE, payload: {promptId: 0, selectionText: 1}};
+    expect(CompleteFromTabRequest.isCompleteFromTabRequest(request)).toBe(false);
+    request = { endpoint: Endpoint.COMPLETE, payload: {promptId: "ok", selectionText: ""}};
+    expect(CompleteFromTabRequest.isCompleteFromTabRequest(request)).toBe(false);
+    request = { endpoint: Endpoint.SAVE_DATA, payload: {promptId: 0, selectionText: ""}};
+    expect(CompleteFromTabRequest.isCompleteFromTabRequest(request)).toBe(false);
   });
 
   test('CompleteRequest', () => {

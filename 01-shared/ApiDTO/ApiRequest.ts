@@ -18,11 +18,34 @@ export class OpenRequest implements ApiRequest {
   };
 };
 
-export class CompleteRequest implements ApiRequest {
+export class CompleteFromTabRequest implements ApiRequest {
   public endpoint = Endpoint.COMPLETE;
-  public payload: {promptId: number; selectionText: string; tabId: number; };
+  public payload: {promptId: number; selectionText: string;};
+
+  constructor(promptId: number, selectionText: string) {
+    this.payload = {promptId, selectionText};
+  };
+
+  static isCompleteFromTabRequest(request: unknown): request is CompleteFromTabRequest {
+    return ApiRequest.isApiRequest(request)
+      && request.endpoint === Endpoint.COMPLETE
+      && typeof request.payload === "object"
+      && request.payload !== null
+      && "promptId" in request.payload && typeof request.payload.promptId === "number"
+      && "selectionText" in request.payload && typeof request.payload.selectionText === "string";
+  };
+};
+
+export class CompleteRequest extends CompleteFromTabRequest implements ApiRequest {
+  public payload: {
+    promptId: number;
+    // promptText: string;
+    selectionText: string;
+    tabId: number;
+  };
 
   constructor(promptId: number, selectionText: string, tabId: number) {
+    super(promptId, selectionText);
     this.payload = {promptId, selectionText, tabId};
   };
 
