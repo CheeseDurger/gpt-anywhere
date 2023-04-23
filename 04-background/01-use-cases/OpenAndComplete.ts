@@ -1,6 +1,6 @@
 /// <reference types="chrome-types" />
 import { config } from "../../01-shared/config";
-import { DataDTO } from "../../01-shared/StorageDTO";
+import { DataDTO, PromptDTO } from "../../01-shared/StorageDTO";
 import { CompleteRequest, OpenRequest } from "../../01-shared/ApiDTO/ApiRequest";
 import { AiPort, aiFactory } from "../02-ports/output/Ai";
 import { PublisherPort, publisherFactory } from "../02-ports/output/Publisher";
@@ -13,12 +13,40 @@ export class OpenAndCompleteUseCase {
 
   /**
    * Open a port to target tab and stream completion
+   * 
+   * @description
+   * 1. Build final prompt text
+   * 2. Call API method to get completion
    */
-  public async handle(request: CompleteRequest): Promise<void> {
+  public async handleFromContextMenu(menuItemId: number, selectionText: string, tabId: number): Promise<void> {
+
+    const data: DataDTO = await storageFactory().get();
+    const index: number = data.prompts.findLastIndex((prompt: PromptDTO) => prompt.id === menuItemId);
+
+    // Guard clause: prompt must be found
+    if (index === -1) {
+      console.error("ERROR: prompt not found");
+      return;
+    };
+
+    const promptText: string = this.buildFinalPrompt(data.prompts[index].value, selectionText);
+
+    const request = new CompleteRequest(
+      promptText,
+      selectionText,
+      tabId,
+    );
+    await this.handleFromAPI(request);
+  };
+
+  /**
+   * Open a port to target tab and stream completion
+   */
+  public async handleFromAPI(request: CompleteRequest): Promise<void> {
 
     // Open modal
     const openRequest: OpenRequest = new OpenRequest(
-      request.payload.promptId,
+      request.payload.promptText,
       request.payload.selectionText,
     );
     await publisherFactory().openModal(request.payload.tabId, openRequest);
@@ -26,8 +54,7 @@ export class OpenAndCompleteUseCase {
     // Build prompt
     const data: DataDTO = await storageFactory().get();
     const prompt: string = this.buildFinalPrompt(
-      data,
-      request.payload.promptId,
+      request.payload.promptText,
       request.payload.selectionText,
     );
 
@@ -45,17 +72,12 @@ export class OpenAndCompleteUseCase {
 
   /**
    * Build final prompt
-   * @param prompt 
+   * @param promptText 
    * @param selectedText 
    * @returns final prompt
    */
-  private buildFinalPrompt(data: DataDTO, promptId: number, selectionText: string): string {
-    const prompt = data.prompts.find( prompt => prompt.id === promptId );
-    if (prompt === undefined) {
-      console.error("ERROR: prompt data corrupted. Please, backup your prompts and re-install the extension.", data.prompts);
-      throw new Error("ERROR: prompt data corrupted");
-    };
-    return prompt.value.replaceAll(config.prompt.susbstitutionPlaceholder, selectionText);
+  private buildFinalPrompt(promptText: string, selectionText: string): string {
+    return promptText.replaceAll(config.prompt.susbstitutionPlaceholder, selectionText);
   };
 
 };

@@ -4,15 +4,15 @@ import { Storage } from "../../02-ports/output/Storage";
 export class SessionStorage implements Storage {
   
   public storeRequest(request: OpenRequest): void {
-    sessionStorage.promptId = request.payload.promptId;
+    sessionStorage.promptText = request.payload.promptText;
     sessionStorage.selectionText = request.payload.selectionText;
   };
 
   public retrieveRequest(): OpenRequest {
-    const promptId = sessionStorage.promptId + "";
-    const selectionText = sessionStorage.selectionText + "";
+    const promptText: string = sessionStorage.promptText + "";
+    const selectionText: string = sessionStorage.selectionText + "";
     return new OpenRequest(
-      parseInt(promptId),
+      promptText,
       selectionText,
     );
   };

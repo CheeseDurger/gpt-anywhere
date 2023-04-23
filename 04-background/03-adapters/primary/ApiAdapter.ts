@@ -7,7 +7,7 @@ import { SetData } from "../../01-use-cases/SetData";
 export class ApiAdapter {
 
   /**
-   * Register message handlers for the extension's API.
+   * Register message handlers for the extension's API
    */
   public init() {
     /**
@@ -23,9 +23,8 @@ export class ApiAdapter {
     sender: chrome.runtime.MessageSender,
     sendResponse: (ApiResponse: ApiResponse) => void,
   ): boolean {
-    console.log("request", request);
-    switch (request.endpoint) {
 
+    switch (request.endpoint) {
 
       case Endpoint.COMPLETE:
 
@@ -44,11 +43,11 @@ export class ApiAdapter {
         };
 
         const completeRequest = new CompleteRequest(
-          request.payload.promptId,
+          request.payload.promptText,
           request.payload.selectionText,
           sender.tab.id
         );
-        new OpenAndCompleteUseCase().handle(completeRequest);
+        new OpenAndCompleteUseCase().handleFromAPI(completeRequest);
         return false;
         break;
     

@@ -1,5 +1,4 @@
 import { OpenAndCompleteUseCase } from "../../01-use-cases/OpenAndComplete";
-import { CompleteRequest } from "../../../01-shared/ApiDTO/ApiRequest";
 
 export class ChromeOpenAndCompleteAdapter {
 
@@ -19,13 +18,13 @@ export class ChromeOpenAndCompleteAdapter {
     // - Tabs might not have ids (eg. tabs without ids)
     if (tab?.id === undefined) return;
 
-
-    const request: CompleteRequest = new CompleteRequest(
-      parseInt(info.menuItemId.toString()),
+    const menuItemId: number = typeof info.menuItemId === "string" ? parseInt(info.menuItemId) : info.menuItemId;
+    
+    await new OpenAndCompleteUseCase().handleFromContextMenu(
+      menuItemId,
       info.selectionText ?? "",
-      tab.id,
+      tab.id
     );
-    await new OpenAndCompleteUseCase().handle(request);
 
   }
 

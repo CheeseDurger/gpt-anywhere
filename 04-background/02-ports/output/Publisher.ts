@@ -1,4 +1,4 @@
-import { OpenModalRequest } from "../../../01-shared/ApiDTO/ApiRequest";
+import { OpenRequest } from "../../../01-shared/ApiDTO/ApiRequest";
 import { ChromePublisherAdapter } from "../../03-adapters/secondary/ChromePublisher";
 
 export interface PublishRequest {
@@ -8,7 +8,7 @@ export interface PublishRequest {
 
 export interface PublisherPort {
   publish: (tabId: number, reader: ReadableStreamDefaultReader<string>) => Promise<void>;
-  openModal: (tabId: number, request: OpenModalRequest) => Promise<void>;
+  openModal: (tabId: number, request: OpenRequest) => Promise<void>;
 };
 
 export function publisherFactory(): PublisherPort {

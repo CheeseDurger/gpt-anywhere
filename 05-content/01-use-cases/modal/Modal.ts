@@ -128,7 +128,7 @@ export class Modal {
 
   private regenerate = async (): Promise<void> => {
     const openRequest: OpenRequest = storageFactory().retrieveRequest();
-    const request = new CompleteFromTabRequest(openRequest.payload.promptId, openRequest.payload.selectionText);
+    const request = new CompleteFromTabRequest(openRequest.payload.promptText, openRequest.payload.selectionText);
     backgroundFactory().complete(request);
   };
 

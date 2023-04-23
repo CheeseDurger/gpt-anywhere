@@ -2,10 +2,10 @@ import { DataDTO } from "../StorageDTO";
 
 export class OpenRequest implements ApiRequest {
   public endpoint = Endpoint.OPEN_MODAL;
-  public payload: {promptId: number; selectionText: string; };
+  public payload: {promptText: string; selectionText: string; };
 
-  constructor(promptId: number, selectionText: string) {
-    this.payload = {promptId, selectionText};
+  constructor(promptText: string, selectionText: string) {
+    this.payload = {promptText, selectionText};
   };
 
   static isOpenRequest(request: unknown): request is OpenRequest {
@@ -13,17 +13,17 @@ export class OpenRequest implements ApiRequest {
       && request.endpoint === Endpoint.OPEN_MODAL
       && typeof request.payload === "object"
       && request.payload !== null
-      && "promptId" in request.payload && typeof request.payload.promptId === "number"
+      && "promptText" in request.payload && typeof request.payload.promptText === "string"
       && "selectionText" in request.payload && typeof request.payload.selectionText === "string";
   };
 };
 
 export class CompleteFromTabRequest implements ApiRequest {
   public endpoint = Endpoint.COMPLETE;
-  public payload: {promptId: number; selectionText: string;};
+  public payload: {promptText: string; selectionText: string;};
 
-  constructor(promptId: number, selectionText: string) {
-    this.payload = {promptId, selectionText};
+  constructor(promptText: string, selectionText: string) {
+    this.payload = {promptText, selectionText};
   };
 
   static isCompleteFromTabRequest(request: unknown): request is CompleteFromTabRequest {
@@ -31,22 +31,17 @@ export class CompleteFromTabRequest implements ApiRequest {
       && request.endpoint === Endpoint.COMPLETE
       && typeof request.payload === "object"
       && request.payload !== null
-      && "promptId" in request.payload && typeof request.payload.promptId === "number"
+      && "promptText" in request.payload && typeof request.payload.promptText === "string"
       && "selectionText" in request.payload && typeof request.payload.selectionText === "string";
   };
 };
 
 export class CompleteRequest extends CompleteFromTabRequest implements ApiRequest {
-  public payload: {
-    promptId: number;
-    // promptText: string;
-    selectionText: string;
-    tabId: number;
-  };
+  public payload: {promptText: string; selectionText: string; tabId: number;};
 
-  constructor(promptId: number, selectionText: string, tabId: number) {
-    super(promptId, selectionText);
-    this.payload = {promptId, selectionText, tabId};
+  constructor(promptText: string, selectionText: string, tabId: number) {
+    super(promptText, selectionText);
+    this.payload = {promptText, selectionText, tabId};
   };
 
   static isCompleteRequest(request: unknown): request is CompleteRequest {
@@ -54,7 +49,7 @@ export class CompleteRequest extends CompleteFromTabRequest implements ApiReques
       && request.endpoint === Endpoint.COMPLETE
       && typeof request.payload === "object"
       && request.payload !== null
-      && "promptId" in request.payload && typeof request.payload.promptId === "number"
+      && "promptText" in request.payload && typeof request.payload.promptText === "string"
       && "selectionText" in request.payload && typeof request.payload.selectionText === "string"
       && "tabId" in request.payload && typeof request.payload.tabId === "number";
   };
